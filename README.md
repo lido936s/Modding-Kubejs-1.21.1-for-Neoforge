@@ -1,74 +1,85 @@
 # Modding-Kubejs-1.21.1-for-Neoforge
 
-Une collection de scripts et de templates d'automatisation pour **KubeJS** sous Minecraft **1.21.1 (NeoForge)**. Ce dépôt regroupe des exemples pratiques et optimisés pour interconnecter différents mods populaires tels que **Lychee** et **Create**, en appliquant les standards de développement modernes (fonctions réutilisables, tags universels).
+![Minecraft Version](https://shields.io)
+![Modloader](https://shields.io)
+![API](https://shields.io)
+
+Une collection complète de scripts d'automatisation, de recettes personnalisées et de templates réutilisables développée pour **KubeJS** sous **Minecraft 1.21.1 (NeoForge)**. 
+
+Ce dépôt sert de vitrine technique et de base modulaire pour interconnecter des mods populaires axés sur la technologie, la survie de type Skyblock et les interactions contextuelles avancées, en appliquant les standards de développement modernes (fonctions d'abstractions, réduction de la duplication de code et utilisation de tags universels).
 
 ---
 
-## 🚀 Contenu du Dépôt
+## 🔌 Mods Utilisés & Écosystème
 
-Le dépôt est structuré autour de fichiers de scripts serveurs (`server_scripts`) pour configurer dynamiquement les recettes de votre modpack :
+Pour que l'intégralité des scripts présents dans ce dépôt s'exécute sans erreur, votre modpack doit inclure les mods et dépendances listés ci-dessous :
 
-*   **`lychee_pebbles.js`** : Gestion de la récolte de cailloux au clic droit sur la roche à l'aide d'outils (via le mod *Lychee*).
-*   **`create_mixer_fluid.js`** : Automatisation et création de recettes de mélange de fluides (via le mod *Create*).
+### 核心 / Coeur du Système
+*   **[KubeJS (NeoForge)](https://curseforge.com)** : L'API principale permettant de manipuler les recettes, les événements serveurs/clients et le comportement du jeu en JavaScript.
+*   **[Rhino](https://curseforge.com)** : Dépendance interne obligatoire de KubeJS servant de moteur d'exécution JavaScript.
 
----
-
-## 🛠️ Analyse des Scripts
-
-### 1. Système de Récolte de Cailloux (`lychee_pebbles.js`)
-Ce script utilise le mod **Lychee** pour permettre aux joueurs de gratter la roche afin d'en extraire de petits cailloux. Il intègre une fonction template réutilisable pour éviter la duplication de code.
-
-*   **Mécanique de déclenchement :** Un **Clic droit + S'accroupir** (`is_sneaking`) sur un bloc spécifique.
-*   **Compatibilité globale :** Utilise le tag universel des pioches (`c:tools/pickaxes`) pour fonctionner de base avec n'importe quelle pioche (Fer, Diamant, mods tiers, etc.).
-*   **Système de butin (Loot) :** 
-    *   Exécute entre **1 et 16 lancers (rolls)** par clic.
-    *   Chaque lancer possède **50% de chance** de faire tomber le caillou associé au sol.
-*   **Durabilité :** L'outil utilisé perd automatiquement **1 point d'usure** par interaction réussie (`damage_item`).
-
-#### Configuration des blocs et drops :
-
-| Bloc d'origine | Caillou obtenu (Butin) | Tag Outil Requis |
-| :--- | :--- | :--- |
-| `minecraft:stone` | `havenpebbles:stone_pebble` | `c:tools/pickaxes` |
-| `minecraft:andesite` | `havenpebbles:andesite_pebble` | `c:tools/pickaxes` |
-| `minecraft:diorite` | `havenpebbles:diorite_pebble` | `c:tools/pickaxes` |
-| `minecraft:granite` | `havenpebbles:granite_pebble` | `c:tools/pickaxes` |
+### 🛠️ Intégrations et Mécaniques de Gameplay
+*   **[Lychee](https://curseforge.com)** : Mod de gestion de recettes personnalisées basé sur des interactions physiques (clic droit sur bloc, objets lancés au sol, entités, fluides). Utilisé ici pour créer des interactions complexes et immersives.
+*   **[Create](https://curseforge.com)** : Mod technologique de cinématique et de transfert d'énergie. Utilisé ici pour étendre les capacités du mélangeur mécanique avec des fluides.
+*   **[Ex Deorum](https://curseforge.com)** : Mod de type Skyblock (successeur spirituel d'Ex Nihilo). Utilisé pour l'outil de type Crochet (`exdeorum:crook`) et le Ver à soie (`exdeorum:silkworm`).
+*   **[Haven Pebbles](https://curseforge.com)** : Ajoute de petits cailloux spécifiques (Stone, Andésite, Diorite, Granite) récoltables.
 
 ---
 
-### 2. Recettes de Mélangeur Create (`create_mixer_fluid.js`)
-Ce script permet d'étendre les possibilités du mod **Create** en ajoutant des recettes personnalisées pour le **Mélangeur Mécanique (Mechanical Mixer)** utilisant des fluides et des composants liquides pour vos progressions personnalisées.
+## 🛠️ Analyse Détaillée des Scripts (`server_scripts/`)
+
+Les scripts tirent profit du principe de programmation **DRY** (*Don't Repeat Yourself*) en encapsulant les syntaxes JSON complexes de Lychee et Create dans des fonctions JavaScript épurées.
+
+### 1. Récolte de Cailloux (`lychee_pebbles.js`)
+Gère l'extraction de petits cailloux en grattant de la roche naturelle.
+*   **Condition contextuelle :** Le joueur doit obligatoirement être **accroupi** (`is_sneaking`).
+*   **Outil requis :** Utilise le tag universel moderne **`c:tools/pickaxes`**. N'importe quelle pioche (vanilla ou modifiée) est compatible.
+*   **Algorithme de butin :** Déclenche entre **1 et 16 lancers (rolls)** simultanés à chaque clic. Chaque lancer applique une chance de **50%** de faire apparaître le caillou au sol.
+*   **Durabilité :** Applique 1 point d'usure (`damage_item`) sur la pioche par interaction.
+
+### 2. Récolte sur le Feuillage (`lychee_leavesdrop.js`)
+Permet de récupérer des ressources cruciales de Skyblock en frappant les feuilles d'arbres.
+*   **Condition contextuelle :** Le joueur doit être **accroupi** (`is_sneaking`).
+*   **Outil requis :** Le crochet d'Ex Deorum (`exdeorum:crook`). Applique également un point d'usure.
+*   **Butins et probabilités indépendantes par clic :**
+    *   `exdeorum:silkworm` (Ver à soie) : **50%** de chance.
+    *   `minecraft:stick` (Bâton) : **20%** de chance.
+    *   `minecraft:oak_leaves` (Feuilles de chêne) : **10%** de chance.
+
+### 3. Recettes de Mélangeur de Fluides (`create_mixer_fluid.js`)
+Permet de créer des recettes sur mesure pour le **Mélangeur Mécanique (Mechanical Mixer)** de Create. Ce script étend les mécaniques de l'usine à fluides en combinant des composants liquides et des ingrédients solides/liquides pour générer de nouveaux alliages ou fluides customisés nécessaires aux progressions de modpacks.
 
 ---
 
-## ⚙️ Prérequis et Installation
+## 📂 Structure du Répertoire KubeJS
 
-### 1. Mods Requis
-Pour que ces scripts s'exécutent correctement, assurez-vous d'avoir installé les mods suivants sur votre instance de jeu :
-*   **NeoForge** (Version 1.21.1)
-*   **KubeJS**
-*   **Lychee**
-*   **Create**
+Voici l'arborescence recommandée pour intégrer proprement ces fichiers à votre projet de modding :
 
-### 2. Déploiement des fichiers
-Pour appliquer ces modifications sur votre jeu ou votre serveur :
+```text
+📁 votre_instance_minecraft/
+└── 📁 kubejs/
+    └── 📁 server_scripts/
+        ├── 📄 lychee_pebbles.js        # Recettes d'extraction de cailloux (Lychee)
+        ├── 📄 lychee_leavesdrop.js     # Recettes d'arbre au crochet (Lychee)
+        └── 📄 create_mixer_fluid.js    # Recettes du mélangeur à fluides (Create)
+```
+
+---
+
+## ⚙️ Installation & Rechargement
+
 1. Téléchargez ou clonez ce dépôt GitHub.
-2. Copiez les fichiers `.js` de votre choix.
-3. Collez-les dans le répertoire de votre instance Minecraft à cet emplacement précis :
+2. Déplacez vos fichiers `.js` dans le dossier `kubejs/server_scripts/` de votre instance.
+3. Lancez votre jeu. 
+4. **Le point fort de KubeJS :** Si vous modifiez un script en cours de partie, vous n'avez pas besoin de redémarrer Minecraft. Exécutez simplement la commande suivante dans le chat pour appliquer les changements à chaud :
    ```text
-   📁 votre_instance/
-   └── 📁 kubejs/
-       └── 📁 server_scripts/
-           ├── 📄 lychee_pebbles.js
-           └── 📄 create_mixer_fluid.js
+   /kubejs reload
    ```
-4. Lancez votre jeu ou exécutez la commande `/kubejs reload` directement en jeu pour appliquer les modifications instantanément sans redémarrer.
 
 ---
 
 ## 📈 Évolutions et Contributions
-Les scripts présents sur ce dépôt sont pensés pour être facilement extensibles. Si vous souhaitez ajouter un nouveau type de roche ou un nouveau mélange de fluide, il vous suffit de dupliquer la ligne d'enregistrement correspondante à la fin de chaque fichier en y insérant vos propres IDs d'items.
 
-N'hésitez pas à ouvrir une *Issue* ou une *Pull Request* pour proposer des optimisations ou ajouter de nouvelles intégrations de mods !
+Toutes les fonctions de ce dépôt sont pensées pour être hautement extensibles. Pour ajouter un bloc ou un fluide, il suffit d'ajouter une seule ligne à la fin du script concerné en suivant le modèle de la fonction template. 
 
-
+Les *Pull Requests* sont les bienvenues pour ajouter des intégrations avec d'autres mods technologiques ou magiques (comme *Blood Magic*, *Botania* ou *Thermal Expansion*) sous l'environnement 1.21.1 NeoForge !
